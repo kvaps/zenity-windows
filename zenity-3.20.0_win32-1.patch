@@ -1,0 +1,66 @@
+diff -ur a/src/main.c b/src/main.c
+--- a/src/main.c        2015-10-02 14:39:18.000000000 +0300
++++ b/src/main.c        2016-08-11 23:17:48.802734300 +0300
+@@ -25,6 +25,7 @@
+
+ #include "zenity.h"
+ #include "option.h"
++#include "util.h"
+
+ #include <stdlib.h>
+ #include <glib.h>
+@@ -43,7 +44,11 @@
+   setlocale(LC_ALL,"");
+ #endif
+
++#ifdef __CYGWIN__
++  bindtextdomain(GETTEXT_PACKAGE, zenity_util_pass_path ( "locale", "\\"));
++#else
+   bindtextdomain(GETTEXT_PACKAGE, GNOMELOCALEDIR);
++#endif
+   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+   textdomain(GETTEXT_PACKAGE);
+
+diff -ur a/src/util.c b/src/util.c
+--- a/src/util.c        2015-10-02 14:39:18.000000000 +0300
++++ b/src/util.c        2016-08-11 23:17:48.808593700 +0300
+@@ -49,6 +49,16 @@
+ #define ZENITY_ERROR_DEFAULT   -1
+ #define ZENITY_EXTRA_DEFAULT   127
+
++#ifdef __CYGWIN__
++char * zenity_util_pass_path ( char *folder, char *filename ) {
++       char*           datadir = getenv("ZENITY_DATADIR");
++       static char             temp[2048];             // the path is shall not exceed 2048 characters
++       sprintf(temp, "%s%s%s", datadir, folder, filename);
++
++       return temp;
++}
++#endif
++
+ GtkBuilder*
+ zenity_util_load_ui_file (const gchar *root_widget, ...)
+ {
+diff -ur a/src/util.h b/src/util.h
+--- a/src/util.h        2015-10-02 14:39:18.000000000 +0300
++++ b/src/util.h        2016-08-11 23:17:48.818359300 +0300
+@@ -7,10 +7,19 @@
+
+ G_BEGIN_DECLS
+
++#ifdef __CYGWIN__
++#define ZENITY_UI_FILE_FULLPATH                        zenity_util_pass_path ( "\\", "zenity.ui")
++#define ZENITY_UI_FILE_RELATIVEPATH            "./zenity.ui"
++
++#define ZENITY_IMAGE_FULLPATH(filename)                zenity_util_pass_path ( "\\", filename )
++#else
+ #define ZENITY_UI_FILE_FULLPATH              ZENITY_DATADIR "/zenity.ui"
+ #define ZENITY_UI_FILE_RELATIVEPATH          "./zenity.ui"
+
+ #define ZENITY_IMAGE_FULLPATH(filename)         (ZENITY_DATADIR "/" filename)
++#endif
++
++char *         zenity_util_pass_path           ( char *folder, char *filename );
+
+ GtkBuilder*     zenity_util_load_ui_file                  (const gchar    *widget_root, ...) G_GNUC_NULL_TERMINATED;
+ gchar *         zenity_util_strip_newline                 (gchar          *string);
