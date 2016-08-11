@@ -11,8 +11,8 @@ Zenity is a utility used to add GUI forms to scripts and receive feedback from t
 ## Downloads
 
  * Win32 installer
-   * zenity-3.20.0_win32-1.exe
-   * MD5.SUM
+   * [zenity-3.20.0_win32-1.exe](https://github.com/kvaps/one-connect/releases/download/v3.20.0-1/zenity-3.20.0_win32-1.exe)
+   * [MD5.SUM](https://github.com/kvaps/zenity-windows/blob/master/MD5.SUM)
  * Source code
    * http://ftp.gnome.org/pub/gnome/sources/zenity/
 
